@@ -6,6 +6,11 @@ Fuzzy Use is a Metasploit plugin which alters the behavior of the "use" command.
 If used with an argument, the "use" command will behave as usual. You can even still push tab a dozen times before finding the module you want, if that's your secret kink.
 However, if used without any argument, the "use" command will pipe the list of all modules to fzf, allowing you to select a module in a more civilised manner.
 
+## TODO
+
+I will soon provide screenshots (or even maybe a screen recording) to showcase the plugin
+I will also add multi-module selection possible. Selecting multiple modules in Fzf will push them all to the module stack (yay, tab will become useful again!). It's not done yet.
+
 # Installation
 
 Put the plugin somewhere, then load it. Nothing fancy.
