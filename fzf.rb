@@ -1,97 +1,100 @@
-#
-# $Id$
-#
-
 module Msf
-
-###
-#
-# This class illustrates a sample plugin.  Plugins can change the behavior of
-# the framework by adding new features, new user interface commands, or
-# through any other arbitrary means.  They are designed to have a very loose
-# definition in order to make them as useful as possible.
-#
-# $Revision$
-###
-class Plugin::Sample < Msf::Plugin
-
-  ###
-  #
-  # This class implements a sample console command dispatcher.
-  #
-  ###
-  class ConsoleCommandDispatcher
-    include Msf::Ui::Console::CommandDispatcher
-
-    #
-    # The dispatcher's name.
-    #
+  class Plugin::Fuzzy_Use < Msf::Plugin
     def name
-      "Sample"
+      "fuzzy_use"
     end
 
-    #
-    # Returns the hash of commands supported by this dispatcher.
-    #
-    def commands
-      {
-        "sample" => "A sample command added by the sample plugin"
-      }
+    def desc
+      "Use fzf to provide a nicer module selection experience."
     end
 
-    #
-    # This method handles the sample command.
-    #
-    def cmd_sample(*args)
-      print_line("You passed: #{args.join(' ')}")
+    def initialize(framework, opts)
+      super
+
+      modules_table = Rex::Text::Table.new(
+        "WordWrap" => false,
+        "Columns" => [
+          "Name",
+          "Disclosure Date",
+          "Rank",
+          "Check",
+          "Name",
+          "Description",
+        ],
+        "ColProps" => {
+          "Rank" => {
+            "Formatters" => [Msf::Ui::Console::TablePrint::RankFormatter.new],
+          },
+        },
+      )
+      modules = Msf::Modules::Metadata::Cache.instance.find({})
+      modules.each do |mod|
+        modules_table << [
+          mod.fullname,
+          mod.disclosure_date.nil? ? "" : mod.disclosure_date.strftime("%Y-%m-%d"),
+          mod.rank,
+          mod.check ? "Yes" : "No",
+          mod.name,
+          "#" + mod.description.gsub(/\s+/, " "),
+        ]
+      end
+
+      $modules_table = modules_table.to_s
+
+      add_console_dispatcher(Fuzzy_Use_Dispatcher)
     end
+
+    class Fuzzy_Use_Dispatcher < Msf::Ui::Console::CommandDispatcher::Modules
+      include Msf::Ui::Console::CommandDispatcher
+
+      def name
+        "Fuzzy_Use_Dispatcher"
+      end
+
+      def commands
+        {
+          "use" => "Interact with a module by name or search term/index",
+        }
+      end
+
+      alias_method :old_cmd_use, :cmd_use unless method_defined? :old_cmd_use
+
+      def cmd_use(*args)
+        if args.length == 0
+          fzf_arguments = [
+            "--history=/dev/shm/msf_fuzzy_use_history",
+            "--exact",
+            "--no-hscroll",
+            "--preview",
+            'echo {} |cut -d "#" -f 2',
+            "--preview-window",
+            "down:3:wrap",
+            "--no-info",
+            "--cycle",
+            "--tac",
+            "--border",
+            "--multi",
+            "--header-lines=2",
+            "--bind=tab:toggle+down,btab:deselect-all,enter:toggle+accept",
+            "--prompt",
+            "Select a module to use > ",
+          ]
+          chosen_one = IO.popen(["fzf"] + fzf_arguments, "r+") { |fzf|
+            fzf.write($modules_table)
+            fzf.read.split(" ").first
+          }
+          args = chosen_one == nil ? [] : [chosen_one]
+        end
+
+        old_cmd_use(*args)
+      end
+    end
+
+    def cleanup
+      $modules_table = nil
+      remove_console_dispatcher("Fuzzy_Use_Dispatcher")
+    end
+
+    protected
   end
-
-  #
-  # The constructor is called when an instance of the plugin is created.  The
-  # framework instance that the plugin is being associated with is passed in
-  # the framework parameter.  Plugins should call the parent constructor when
-  # inheriting from Msf::Plugin to ensure that the framework attribute on
-  # their instance gets set.
-  #
-  def initialize(framework, opts)
-    super
-
-    # If this plugin is being loaded in the context of a console application
-    # that uses the framework's console user interface driver, register
-    # console dispatcher commands.
-    add_console_dispatcher(ConsoleCommandDispatcher)
-
-    print_status("Sample plugin loaded.")
-  end
-
-  #
-  # The cleanup routine for plugins gives them a chance to undo any actions
-  # they may have done to the framework.  For instance, if a console
-  # dispatcher was added, then it should be removed in the cleanup routine.
-  #
-  def cleanup
-    # If we had previously registered a console dispatcher with the console,
-    # deregister it now.
-    remove_console_dispatcher('Sample')
-  end
-
-  #
-  # This method returns a short, friendly name for the plugin.
-  #
-  def name
-    "sample"
-  end
-
-  #
-  # This method returns a brief description of the plugin.  It should be no
-  # more than 60 characters, but there are no hard limits.
-  #
-  def desc
-    "Demonstrates using framework plugins"
-  end
-
-protected
-end
-
 end
