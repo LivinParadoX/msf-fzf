@@ -8,20 +8,20 @@ However, if used without any argument, the "use" command will pipe the list of a
 
 ## TODO
 
-I will soon provide screenshots (or even maybe a screen recording) to showcase the plugin
+I will soon provide screenshots (or even maybe a screen recording) to showcase the plugin.
 I will also add multi-module selection possible. Selecting multiple modules in Fzf will push them all to the module stack (yay, tab will become useful again!). It's not done yet.
 
 # Installation
 
 Put the plugin somewhere, then load it. Nothing fancy.
 
-# Authors
+### Authors
 
 * Alexandre Janvrin, penetration tester at Beijaflore (https://www.beijaflore.com/en/)
 
-# License
+### License
 
-## BSD 3-Clause
+#### BSD 3-Clause
 
 Copyright 2021 Alexandre Janvrin
 
@@ -34,7 +34,3 @@ Redistribution and use in source and binary forms, with or without modification,
 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# URLs
-
-* https://github.com/LivinParadoX/msf-fzf/
